@@ -563,7 +563,7 @@ describe('replacementTransformer', () => {
         const rule = createReplacementRule({
           pattern: 'test',
           replacement: 'TEST',
-        });
+        }, 'book');
   
         expect(rule).toMatchObject({
           pattern: 'test',
@@ -571,6 +571,7 @@ describe('replacementTransformer', () => {
           isRegex: false,
           enabled: true,
           order: 1000,
+          scope: 'book',
         });
         expect(rule.id).toBeDefined();
         expect(typeof rule.id).toBe('string');
@@ -583,7 +584,7 @@ describe('replacementTransformer', () => {
           isRegex: true,
           enabled: false,
           order: 1,
-        });
+        }, 'global');
   
         expect(rule).toMatchObject({
           pattern: '\\d+',
@@ -591,6 +592,7 @@ describe('replacementTransformer', () => {
           isRegex: true,
           enabled: false,
           order: 1,
+          scope: 'global',
         });
       });
     });

@@ -210,6 +210,8 @@ export interface ScreenConfig {
 }
 
 // generated with copilot
+export type ReplacementRuleScope = 'single' | 'book' | 'global';
+
 export interface ReplacementRule {
   id: string;
   pattern: string;
@@ -217,6 +219,7 @@ export interface ReplacementRule {
   enabled: boolean;
   isRegex: boolean;
   order: number; // Lower numbers apply first
+  scope?: ReplacementRuleScope;
 }
 
 export interface ReplacementRulesConfig {
