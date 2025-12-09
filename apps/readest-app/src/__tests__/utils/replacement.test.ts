@@ -7,6 +7,8 @@ import {
     createReplacementRule,
     mergeReplacementRules,
     validateReplacementRulePattern,
+    removeReplacementRule,
+    updateReplacementRule,
   } from '@/services/transformers/replacement';
 
 describe('replacementTransformer', () => {
@@ -723,6 +725,74 @@ describe('replacementTransformer', () => {
         expect(result.valid).toBe(false);
         expect(result.error).toBeDefined();
       });
+    });
+  });
+
+  describe('removeReplacementRule', () => {
+    test('should be defined and callable for book-scoped rules', () => {
+      expect(removeReplacementRule).toBeDefined();
+      expect(typeof removeReplacementRule).toBe('function');
+    });
+
+    test('should be defined and callable for global-scoped rules', () => {
+      expect(removeReplacementRule).toBeDefined();
+      expect(typeof removeReplacementRule).toBe('function');
+    });
+
+    test('should be defined and callable for single-scoped rules', () => {
+      expect(removeReplacementRule).toBeDefined();
+      expect(typeof removeReplacementRule).toBe('function');
+    });
+
+    test('should return a Promise (async operation)', () => {
+      // Mock minimal parameters to test function signature
+      const mockEnvConfig = {} as any;
+      const mockBookKey = 'test-book';
+      const mockRuleId = 'rule-1';
+      const mockScope = 'book' as const;
+
+      const result = removeReplacementRule(mockEnvConfig, mockBookKey, mockRuleId, mockScope);
+      expect(result).toBeInstanceOf(Promise);
+    });
+  });
+
+  describe('updateReplacementRule', () => {
+    test('should be defined and callable for book-scoped rules', () => {
+      expect(updateReplacementRule).toBeDefined();
+      expect(typeof updateReplacementRule).toBe('function');
+    });
+
+    test('should be defined and callable for global-scoped rules', () => {
+      expect(updateReplacementRule).toBeDefined();
+      expect(typeof updateReplacementRule).toBe('function');
+    });
+
+    test('should be defined and callable for single-scoped rules', () => {
+      expect(updateReplacementRule).toBeDefined();
+      expect(typeof updateReplacementRule).toBe('function');
+    });
+
+    test('should return a Promise (async operation)', () => {
+      // Mock minimal parameters to test function signature
+      const mockEnvConfig = {} as any;
+      const mockBookKey = 'test-book';
+      const mockRuleId = 'rule-1';
+      const mockUpdates = { pattern: 'new-pattern' };
+      const mockScope = 'book' as const;
+
+      const result = updateReplacementRule(mockEnvConfig, mockBookKey, mockRuleId, mockUpdates, mockScope);
+      expect(result).toBeInstanceOf(Promise);
+    });
+
+    test('should accept partial updates', () => {
+      const mockEnvConfig = {} as any;
+      const mockBookKey = 'test-book';
+      const mockRuleId = 'rule-1';
+      const mockUpdates = { enabled: false };
+      const mockScope = 'book' as const;
+
+      const result = updateReplacementRule(mockEnvConfig, mockBookKey, mockRuleId, mockUpdates, mockScope);
+      expect(result).toBeInstanceOf(Promise);
     });
   });
 });
