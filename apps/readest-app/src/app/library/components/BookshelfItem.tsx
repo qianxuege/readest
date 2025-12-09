@@ -20,8 +20,6 @@ import { md5Fingerprint } from '@/utils/md5';
 import BookItem from './BookItem';
 import GroupItem from './GroupItem';
 
-export type BookshelfItem = Book | BooksGroup;
-
 export const generateBookshelfItems = (
   books: Book[],
   parentGroupName: string,
@@ -51,7 +49,7 @@ export const generateBookshelfItems = (
       booksGroup.books.push(book);
       booksGroup.updatedAt = Math.max(booksGroup.updatedAt, book.updatedAt);
     } else {
-      let groupName = fullGroupName;
+      const groupName = fullGroupName;
       acc.push({
         id: groupName === parentGroupName ? BOOK_UNGROUPED_ID : md5Fingerprint(groupName),
         name: groupName === parentGroupName ? BOOK_UNGROUPED_NAME : groupName,
@@ -76,7 +74,7 @@ export const generateBookshelfItems = (
 
 interface BookshelfItemProps {
   mode: LibraryViewModeType;
-  item: BookshelfItem;
+  item: Book | BooksGroup;
   coverFit: LibraryCoverFitType;
   isSelectMode: boolean;
   itemSelected: boolean;

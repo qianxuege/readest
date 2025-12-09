@@ -29,6 +29,7 @@ export interface FileSystem {
   resolvePath(path: string, base: BaseDir): ResolvedPath;
   getURL(path: string): string;
   getBlobURL(path: string, base: BaseDir): Promise<string>;
+  getImageURL(path: string): Promise<string>;
   openFile(path: string, base: BaseDir, filename?: string): Promise<File>;
   copyFile(srcPath: string, dstPath: string, base: BaseDir): Promise<void>;
   readFile(path: string, base: BaseDir, mode: 'text' | 'binary'): Promise<string | ArrayBuffer>;
@@ -65,6 +66,7 @@ export interface AppService {
   isPortableApp: boolean;
   isDesktopApp: boolean;
   canCustomizeRootDir: boolean;
+  canReadExternalDir: boolean;
   distChannel: DistChannel;
 
   init(): Promise<void>;
@@ -74,6 +76,8 @@ export interface AppService {
   createDir(path: string, base: BaseDir, recursive?: boolean): Promise<void>;
   deleteFile(path: string, base: BaseDir): Promise<void>;
   deleteDir(path: string, base: BaseDir, recursive?: boolean): Promise<void>;
+  exists(path: string, base: BaseDir): Promise<boolean>;
+  getImageURL(path: string): Promise<string>;
 
   setCustomRootDir(customRootDir: string): Promise<void>;
   resolveFilePath(path: string, base: BaseDir): Promise<string>;
@@ -109,9 +113,9 @@ export interface AppService {
   isBookAvailable(book: Book): Promise<boolean>;
   getBookFileSize(book: Book): Promise<number | null>;
   loadBookConfig(book: Book, settings: SystemSettings): Promise<BookConfig>;
-  fetchBookDetails(book: Book, settings: SystemSettings): Promise<BookMetadata>;
+  fetchBookDetails(book: Book): Promise<BookMetadata>;
   saveBookConfig(book: Book, config: BookConfig, settings?: SystemSettings): Promise<void>;
-  loadBookContent(book: Book, settings: SystemSettings): Promise<BookContent>;
+  loadBookContent(book: Book): Promise<BookContent>;
   loadLibraryBooks(): Promise<Book[]>;
   saveLibraryBooks(books: Book[]): Promise<void>;
   getCoverImageUrl(book: Book): string;

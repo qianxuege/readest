@@ -171,6 +171,9 @@ const getColorStyles = (
       ${isDarkMode ? `background: color-mix(in srgb, ${bg} 90%, #000);` : ''}
       ${isDarkMode ? `background-color: color-mix(in srgb, ${bg} 90%, #000);` : ''}
     }
+    blockquote {
+      ${isDarkMode ? `background: color-mix(in srgb, ${bg} 80%, #000);` : ''}
+    }
     blockquote, table * {
       ${isDarkMode && overrideColor ? `background: color-mix(in srgb, ${bg} 80%, #000);` : ''}
       ${isDarkMode && overrideColor ? `background-color: color-mix(in srgb, ${bg} 80%, #000);` : ''}
@@ -236,10 +239,6 @@ const getLayoutStyles = (
   :is(hgroup, header) p {
       text-align: unset;
       hyphens: unset;
-  }
-  pre {
-      white-space: pre-wrap !important;
-      tab-size: 2;
   }
   html, body {
     ${writingMode === 'auto' ? '' : `writing-mode: ${writingMode} !important;`}
@@ -329,8 +328,7 @@ const getLayoutStyles = (
     white-space: pre-wrap !important;
   }
 
-  p:not([dir="rtl"]) {
-    max-width: 100%;
+  body:not([dir="rtl"]) {
     overflow-x: clip;
   }
 
@@ -393,6 +391,11 @@ const getLayoutStyles = (
   .duokan-footnote img:not([class]) {
     width: 0.8em;
     height: 0.8em;
+  }
+  div:has(img.singlepage) {
+    position: relative;
+    width: auto;
+    height: auto;
   }
 
   /* workaround for some badly designed epubs */
@@ -609,14 +612,27 @@ export const transformStylesheet = (vw: number, vh: number, css: string) => {
   // Process duokan-bleed
   css = css.replace(ruleRegex, (_, selector, block) => {
     const directions = ['top', 'bottom', 'left', 'right'];
+    let hasBleed = false;
     for (const dir of directions) {
       const bleedRegex = new RegExp(`duokan-bleed\\s*:\\s*[^;]*${dir}[^;]*;`);
       const marginRegex = new RegExp(`margin-${dir}\\s*:`);
       if (bleedRegex.test(block) && !marginRegex.test(block)) {
+        hasBleed = true;
         block = block.replace(
           /}$/,
           ` margin-${dir}: calc(-1 * var(--margin-${dir})) !important; }`,
         );
+      }
+    }
+    if (hasBleed) {
+      if (!/position\s*:/.test(block)) {
+        block = block.replace(/}$/, ' position: relative !important; }');
+      }
+      if (!/overflow\s*:/.test(block)) {
+        block = block.replace(/}$/, ' overflow: hidden !important; }');
+      }
+      if (!/display\s*:/.test(block)) {
+        block = block.replace(/}$/, ' display: flow-root !important; }');
       }
     }
     return selector + block;

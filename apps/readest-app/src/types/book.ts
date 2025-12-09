@@ -155,6 +155,22 @@ export interface BookFont {
   fontWeight: number;
 }
 
+export type ConvertChineseVariant =
+  | 'none'
+  | 's2t'
+  | 't2s'
+  | 's2tw'
+  | 's2hk'
+  | 's2twp'
+  | 'tw2s'
+  | 'hk2s'
+  | 'tw2sp';
+
+export interface BookLanguage {
+  replaceQuotationMarks: boolean;
+  convertChineseVariant: ConvertChineseVariant;
+}
+
 export interface ViewConfig {
   sideBarTab: string;
   uiLanguage: string;
@@ -169,6 +185,7 @@ export interface ViewConfig {
   showRemainingPages: boolean;
   showProgressInfo: boolean;
   showBarsOnScroll: boolean;
+  showMarginsOnScroll: boolean;
   progressStyle: 'percentage' | 'fraction';
 }
 
@@ -196,6 +213,7 @@ export interface ViewSettings
   extends BookLayout,
     BookStyle,
     BookFont,
+    BookLanguage,
     ViewConfig,
     TTSConfig,
     TranslatorConfig,
@@ -275,5 +293,4 @@ export interface BooksGroup {
 export interface BookContent {
   book: Book;
   file: File;
-  config: BookConfig;
 }

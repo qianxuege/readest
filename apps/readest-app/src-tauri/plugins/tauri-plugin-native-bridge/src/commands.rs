@@ -1,6 +1,8 @@
-use tauri::{command, AppHandle, Runtime};
+use std::path::PathBuf;
+use tauri::{command, AppHandle, Runtime, State};
 
 use crate::models::*;
+use crate::DirectoryCallbackState;
 use crate::NativeBridgeExt;
 use crate::Result;
 
@@ -155,6 +157,26 @@ pub(crate) async fn open_external_url<R: Runtime>(
     payload: OpenExternalUrlRequest,
 ) -> Result<OpenExternalUrlResponse> {
     app.native_bridge().open_external_url(payload)
+}
+
+#[command]
+pub(crate) async fn select_directory<R: Runtime>(
+    app: AppHandle<R>,
+    callback_state: State<'_, DirectoryCallbackState<R>>,
+) -> Result<SelectDirectoryResponse> {
+    let result = app.native_bridge().select_directory()?;
+
+    if let Some(dir_path) = &result.path {
+        let path = PathBuf::from(dir_path);
+
+        if let Ok(callback_guard) = callback_state.callback.lock() {
+            if let Some(callback) = callback_guard.as_ref() {
+                callback(&app, &path);
+            }
+        }
+    }
+
+    Ok(result)
 }
 
 #[command]
