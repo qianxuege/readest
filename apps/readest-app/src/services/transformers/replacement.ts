@@ -1,6 +1,6 @@
 // copilot generated
 import type { Transformer } from './types';
-import { ReplacementRule, ViewSettings } from '@/types/book';
+import { ReplacementRule, ReplacementRuleScope, ViewSettings } from '@/types/book';
 import { SystemSettings } from '@/types/settings';
 import { EnvConfigType } from '@/services/environment';
 import { useReaderStore } from '@/store/readerStore';
@@ -126,11 +126,6 @@ export const replacementTransformer: Transformer = {
 // ============================================================================
 
 /**
- * Scope for applying replacement rules
- */
-export type ReplacementRuleScope = 'single' | 'book' | 'global';
-
-/**
  * Options for creating a replacement rule
  */
 export interface CreateReplacementRuleOptions {
@@ -144,7 +139,10 @@ export interface CreateReplacementRuleOptions {
 /**
  * Creates a new replacement rule with default values
  */
-export function createReplacementRule(options: CreateReplacementRuleOptions): ReplacementRule {
+export function createReplacementRule(
+  options: CreateReplacementRuleOptions,
+  scope: ReplacementRuleScope,
+): ReplacementRule {
   return {
     id: uniqueId(),
     pattern: options.pattern,
@@ -152,6 +150,7 @@ export function createReplacementRule(options: CreateReplacementRuleOptions): Re
     isRegex: options.isRegex ?? false,
     enabled: options.enabled ?? true,
     order: options.order ?? 1000, // Default to high order (applied last)
+    scope,
   };
 }
 
@@ -208,7 +207,7 @@ export async function addReplacementRule(
   options: CreateReplacementRuleOptions,
   scope: ReplacementRuleScope,
 ): Promise<ReplacementRule> {
-  const rule = createReplacementRule(options);
+  const rule = createReplacementRule(options, scope);
 
   switch (scope) {
     case 'single':
@@ -251,7 +250,7 @@ async function addReplacementRuleToBook(
   
   // Check if rule with same pattern already exists
   const existingRule = existingRules.find(
-    (r) => r.pattern === rule.pattern && r.isRegex === rule.isRegex,
+    (r: ReplacementRule) => r.pattern === rule.pattern && r.isRegex === rule.isRegex,
   );
 
   if (existingRule) {
@@ -299,7 +298,7 @@ async function addReplacementRuleToGlobal(
 
   // Check if rule with same pattern already exists
   const existingRule = globalRules.find(
-    (r) => r.pattern === rule.pattern && r.isRegex === rule.isRegex,
+    (r: ReplacementRule) => r.pattern === rule.pattern && r.isRegex === rule.isRegex,
   );
 
   if (existingRule) {
@@ -364,7 +363,7 @@ async function removeReplacementRuleFromBook(
   }
 
   const existingRules = viewSettings.replacementRules || [];
-  const filteredRules = existingRules.filter((r) => r.id !== ruleId);
+  const filteredRules = existingRules.filter((r: ReplacementRule) => r.id !== ruleId);
 
   const updatedViewSettings: ViewSettings = {
     ...viewSettings,
@@ -396,7 +395,7 @@ async function removeReplacementRuleFromGlobal(
   const { settings, setSettings, saveSettings } = useSettingsStore.getState();
 
   const globalRules = settings.globalViewSettings.replacementRules || [];
-  const filteredRules = globalRules.filter((r) => r.id !== ruleId);
+  const filteredRules = globalRules.filter((r: ReplacementRule) => r.id !== ruleId);
 
   const updatedSettings: SystemSettings = {
     ...settings,
@@ -451,7 +450,7 @@ async function updateReplacementRuleInBook(
   }
 
   const existingRules = viewSettings.replacementRules || [];
-  const updatedRules = existingRules.map((r) =>
+  const updatedRules = existingRules.map((r: ReplacementRule) =>
     r.id === ruleId ? { ...r, ...updates } : r,
   );
 
@@ -486,7 +485,7 @@ async function updateReplacementRuleInGlobal(
   const { settings, setSettings, saveSettings } = useSettingsStore.getState();
 
   const globalRules = settings.globalViewSettings.replacementRules || [];
-  const updatedRules = globalRules.map((r) =>
+  const updatedRules = globalRules.map((r: ReplacementRule) =>
     r.id === ruleId ? { ...r, ...updates } : r,
   );
 
