@@ -11,7 +11,8 @@ class ResizeObserverMock {
   unobserve() {}
   disconnect() {}
 }
-(global as unknown as { ResizeObserver: typeof ResizeObserverMock }).ResizeObserver = ResizeObserverMock;
+(global as unknown as { ResizeObserver: typeof ResizeObserverMock }).ResizeObserver =
+  ResizeObserverMock;
 
 // ---- Settings store mock ----
 vi.mock('@/store/settingsStore', () => {
@@ -39,7 +40,8 @@ vi.mock('@/store/settingsStore', () => {
 
   // attach zustand API
   useSettingsStoreMock.getState = () => mockSettingsState;
-  useSettingsStoreMock.setState = (partial: Partial<typeof mockSettingsState>) => Object.assign(mockSettingsState, partial);
+  useSettingsStoreMock.setState = (partial: Partial<typeof mockSettingsState>) =>
+    Object.assign(mockSettingsState, partial);
   useSettingsStoreMock.subscribe = () => () => {};
   useSettingsStoreMock.destroy = () => {};
 
@@ -56,7 +58,13 @@ vi.mock('@/services/environment', async (importOriginal) => {
     ...(typeof actual === 'object' && actual !== null ? actual : {}), // keep ALL named exports including isTauriAppPlatform
 
     default: {
-      ...(typeof actual === 'object' && actual !== null && 'default' in actual && typeof actual.default === 'object' && actual.default !== null ? actual.default : {}),
+      ...(typeof actual === 'object' &&
+      actual !== null &&
+      'default' in actual &&
+      typeof actual.default === 'object' &&
+      actual.default !== null
+        ? actual.default
+        : {}),
       API_BASE: 'http://localhost',
       ENABLE_TRANSLATOR: false,
       getAppService: vi.fn().mockResolvedValue(null),
@@ -67,13 +75,18 @@ vi.mock('@/services/environment', async (importOriginal) => {
   };
 });
 
-
 describe('SettingsDialog Replacement tab', () => {
   it('shows Replacement panel when Replacement tab is clicked', async () => {
-    render(<EnvProvider><SettingsDialog bookKey={''} /></EnvProvider>);
+    render(
+      <EnvProvider>
+        <SettingsDialog bookKey={''} />
+      </EnvProvider>,
+    );
 
     // Find the Replacement tab button by accessible name
-    const replacementButton = screen.getByRole('button', { name: /Text Replacements|Replacement/i });
+    const replacementButton = screen.getByRole('button', {
+      name: /Text Replacements|Replacement/i,
+    });
     expect(replacementButton).toBeTruthy();
 
     // Click Replacement tab
